@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "install:backend": "npm install --prefix backend",
+    "postinstall": "npm run install:backend",
     "start": "npm run start --prefix backend"
   },
   "keywords": ["aeropulse", "grievance", "atm", "aai"],

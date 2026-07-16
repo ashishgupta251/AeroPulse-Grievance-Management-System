@@ -148,8 +148,6 @@ AeroPulse-Grievance-Management-System
 
 </div>
 
-> Replace the above screenshots with actual screenshots from your project.
-
 ---
 
 # 🚀 Installation Guide
@@ -309,11 +307,7 @@ See the `LICENSE` file for more information.
 
 ## Ashish Gupta
 
-Third-Year B.Tech Computer Science Engineering Student
-
-🌐 GitHub
-
-https://github.com/ashishgupta251
+B.Tech Computer Science Engineering Student
 
 💻 Passionate about Full-Stack Development, Backend Engineering, and Cybersecurity.
 

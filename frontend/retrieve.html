@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Data Retrieve · AeroPulse Grievance Management System</title>
+    <link rel="icon" type="image/jpeg" href="assets/aai-logo.jpg" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <script src="js/auth-guard.js" data-guard="internal"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="sidebar-ambient"></div>
+        <div class="sidebar-brand">
+          <div class="brand-logo-badge">
+            <img src="assets/aai-logo.jpg" alt="AAI" />
+          </div>
+          <div class="brand-text">
+            <strong>AeroPulse</strong>
+            <span>Grievance System</span>
+          </div>
+        </div>
+        <nav class="sidebar-nav">
+          <p class="sidebar-section-label">Menu</p>
+          <a href="home.html" class="sidebar-link" data-tooltip="Home">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1V10"
+              />
+            </svg>
+            <span class="label">Home</span>
+            <span
+              class="nav-badge nav-badge--pending"
+              id="navBadgePending"
+              title="Pending entries"
+              style="display: none"
+              >0</span
+            >
+          </a>
+          <a
+            href="retrieve.html"
+            class="sidebar-link active"
+            data-nav-internal
+            data-tooltip="Data Retrieve"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="11" cy="11" r="7" />
+              <path stroke-linecap="round" d="M21 21l-4.3-4.3" />
+            </svg>
+            <span class="label">Data Retrieve</span>
+            <span
+              class="nav-badge nav-badge--total"
+              id="navBadgeTotal"
+              title="Total entries"
+              style="display: none"
+              >0</span
+            >
+          </a>
+          <a
+            href="visualize.html"
+            class="sidebar-link"
+            data-nav-internal
+            data-tooltip="Data Visualize"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M4 19V5m5 14V9m5 10V13m5 6V7"
+              />
+            </svg>
+            <span class="label">Data Visualize</span>
+            <span
+              class="nav-badge nav-badge--overdue"
+              id="navBadgeOverdue"
+              title="Overdue entries"
+              style="display: none"
+              >0</span
+            >
+          </a>
+
+          <p class="sidebar-section-label">Quick Actions</p>
+          <a
+            href="home.html"
+            class="sidebar-link sidebar-quick-add"
+            id="sidebarQuickAdd"
+            data-tooltip="Add Entry"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            <span class="label">Add Entry</span>
+          </a>
+        </nav>
+
+        <div
+          class="sidebar-activity"
+          id="sidebarActivity"
+          style="display: none"
+        >
+          <p class="sidebar-section-label" style="margin: 0">Recent Activity</p>
+          <ul class="activity-list" id="activityList"></ul>
+        </div>
+
+        <div class="sidebar-foot">
+          <button
+            type="button"
+            class="sidebar-link sidebar-shortcuts-btn"
+            id="sidebarShortcutsBtn"
+            data-tooltip="Keyboard Shortcuts"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 18h.01M9.09 9a3 3 0 115.83 1c0 2-3 2-3 4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span class="label">Shortcuts</span>
+            <span class="kbd-hint">?</span>
+          </button>
+          <button
+            class="sidebar-link"
+            data-logout
+            style="width: 100%; border: none; background: none"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 5v1a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h5a2 2 0 012 2v1"
+              />
+            </svg>
+            <span class="label">Logout</span>
+          </button>
+          <button class="sidebar-collapse-btn">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+            <span class="label">Collapse</span>
+          </button>
+        </div>
+        <div
+          class="sidebar-resize-handle"
+          id="sidebarResizeHandle"
+          title="Drag to resize"
+        ></div>
+      </aside>
+
+      <div class="main-col">
+        <header class="topbar">
+          <button
+            class="icon-btn"
+            data-mobile-nav-toggle
+            id="mobileNavBtn"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+          <div class="topbar-title">
+            <h1>Data Retrieve</h1>
+            <span class="breadcrumb">AeroPulse / Retrieve</span>
+          </div>
+          <div class="topbar-actions">
+            <div class="search-box">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="11" cy="11" r="7" />
+                <path stroke-linecap="round" d="M21 21l-4.3-4.3" />
+              </svg>
+              <input
+                type="text"
+                id="searchInput"
+                placeholder="Search organization, unit, remarks…"
+              />
+            </div>
+            <button
+              class="icon-btn"
+              data-theme-toggle
+              title="Toggle dark mode"
+            ></button>
+            <a href="home.html" class="btn btn-outline btn-sm">Back to Home</a>
+          </div>
+        </header>
+
+        <main class="content">
+          <div class="section-gap">
+            <div class="card card-pad">
+              <div class="card-header">
+                <h2>Filter Data</h2>
+                <span class="hint"
+                  >Combine filters to narrow down the results</span
+                >
+              </div>
+              <div class="form-grid form-grid-5">
+                <div class="field">
+                  <label for="fromDate">From</label>
+                  <input type="date" id="fromDate" />
+                </div>
+                <div class="field">
+                  <label for="toDate">To</label>
+                  <input type="date" id="toDate" />
+                </div>
+                <div class="field" id="orgFilterField">
+                  <label>Organization Name</label>
+                </div>
+                <div class="field" id="unitFilterField">
+                  <label>ATS Unit</label>
+                </div>
+                <div class="field">
+                  <label for="statusFilter">Status</label>
+                  <select id="statusFilter">
+                    <option value="">All</option>
+                    <option value="Resolved">Resolved</option>
+                    <option value="Pending">Pending</option>
+                  </select>
+                </div>
+              </div>
+              <div class="flex justify-end mt-16">
+                <button class="link-btn" id="clearFiltersBtn">
+                  Clear all filters
+                </button>
+              </div>
+            </div>
+
+            <div class="card">
+              <div
+                class="card-header card-pad"
+                style="margin-bottom: 0; padding-bottom: 0"
+              >
+                <h2>Results</h2>
+                <span class="hint" id="rowCountHint"></span>
+              </div>
+              <div class="table-wrap">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>S.No</th>
+                      <th>Date</th>
+                      <th>Time</th>
+                      <th>Organization</th>
+                      <th>ATS Unit</th>
+                      <th>Log Extract</th>
+                      <th>Status</th>
+                      <th>Response</th>
+                      <th>PDC</th>
+                      <th>Remarks</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tableBody"></tbody>
+                </table>
+              </div>
+              <div class="footer-actions">
+                <button class="btn btn-success" id="downloadExcelBtn" disabled>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"
+                    />
+                  </svg>
+                  Download Excel
+                </button>
+                <button class="btn btn-primary" id="downloadPdfBtn" disabled>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"
+                    />
+                  </svg>
+                  Download PDF
+                </button>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/retrieve.js"></script>
+  </body>
+</html>

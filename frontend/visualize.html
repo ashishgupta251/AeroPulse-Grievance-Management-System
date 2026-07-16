@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Data Visualize · AeroPulse Grievance Management System</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/visualize.css" />
+    <script src="js/auth-guard.js" data-guard="internal"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="sidebar-ambient"></div>
+        <div class="sidebar-brand">
+          <div class="brand-logo-badge">
+            <img src="assets/aai-logo.jpg" alt="AAI" />
+          </div>
+          <div class="brand-text">
+            <strong>AeroPulse</strong>
+            <span>Grievance System</span>
+          </div>
+        </div>
+        <nav class="sidebar-nav">
+          <p class="sidebar-section-label">Menu</p>
+          <a href="home.html" class="sidebar-link" data-tooltip="Home">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1V10"
+              />
+            </svg>
+            <span class="label">Home</span>
+            <span
+              class="nav-badge nav-badge--pending"
+              id="navBadgePending"
+              title="Pending entries"
+              style="display: none"
+              >0</span
+            >
+          </a>
+          <a
+            href="retrieve.html"
+            class="sidebar-link"
+            data-nav-internal
+            data-tooltip="Data Retrieve"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="11" cy="11" r="7" />
+              <path stroke-linecap="round" d="M21 21l-4.3-4.3" />
+            </svg>
+            <span class="label">Data Retrieve</span>
+            <span
+              class="nav-badge nav-badge--total"
+              id="navBadgeTotal"
+              title="Total entries"
+              style="display: none"
+              >0</span
+            >
+          </a>
+          <a
+            href="visualize.html"
+            class="sidebar-link active"
+            data-nav-internal
+            data-tooltip="Data Visualize"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M4 19V5m5 14V9m5 10V13m5 6V7"
+              />
+            </svg>
+            <span class="label">Data Visualize</span>
+            <span
+              class="nav-badge nav-badge--overdue"
+              id="navBadgeOverdue"
+              title="Overdue entries"
+              style="display: none"
+              >0</span
+            >
+          </a>
+
+          <p class="sidebar-section-label">Quick Actions</p>
+          <a
+            href="home.html"
+            class="sidebar-link sidebar-quick-add"
+            id="sidebarQuickAdd"
+            data-tooltip="Add Entry"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            <span class="label">Add Entry</span>
+          </a>
+        </nav>
+
+        <div
+          class="sidebar-activity"
+          id="sidebarActivity"
+          style="display: none"
+        >
+          <p class="sidebar-section-label" style="margin: 0">Recent Activity</p>
+          <ul class="activity-list" id="activityList"></ul>
+        </div>
+
+        <div class="sidebar-foot">
+          <button
+            type="button"
+            class="sidebar-link sidebar-shortcuts-btn"
+            id="sidebarShortcutsBtn"
+            data-tooltip="Keyboard Shortcuts"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 18h.01M9.09 9a3 3 0 115.83 1c0 2-3 2-3 4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span class="label">Shortcuts</span>
+            <span class="kbd-hint">?</span>
+          </button>
+          <button
+            class="sidebar-link"
+            data-logout
+            style="width: 100%; border: none; background: none"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 5v1a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h5a2 2 0 012 2v1"
+              />
+            </svg>
+            <span class="label">Logout</span>
+          </button>
+          <button class="sidebar-collapse-btn">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+            <span class="label">Collapse</span>
+          </button>
+        </div>
+        <div
+          class="sidebar-resize-handle"
+          id="sidebarResizeHandle"
+          title="Drag to resize"
+        ></div>
+      </aside>
+
+      <div class="main-col">
+        <header class="topbar">
+          <button
+            class="icon-btn"
+            data-mobile-nav-toggle
+            id="mobileNavBtn"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+          <div class="topbar-title">
+            <h1>Data Visualize</h1>
+            <span class="breadcrumb">AeroPulse / Visualize</span>
+          </div>
+          <div class="topbar-actions">
+            <button
+              class="icon-btn"
+              data-theme-toggle
+              title="Toggle dark mode"
+            ></button>
+            <a href="home.html" class="btn btn-outline btn-sm">Back to Home</a>
+          </div>
+        </header>
+
+        <main class="content">
+          <div class="section-gap">
+            <div class="card card-pad">
+              <div class="card-header">
+                <h2>Filter Data</h2>
+                <span class="hint">Charts update instantly as you filter</span>
+              </div>
+              <div class="form-grid form-grid-5">
+                <div class="field">
+                  <label for="fromDate">From</label>
+                  <input type="date" id="fromDate" />
+                </div>
+                <div class="field">
+                  <label for="toDate">To</label>
+                  <input type="date" id="toDate" />
+                </div>
+                <div class="field" id="orgFilterField">
+                  <label>Organization Name</label>
+                </div>
+                <div class="field" id="unitFilterField">
+                  <label>ATS Unit</label>
+                </div>
+                <div class="field">
+                  <label for="statusFilter">Status</label>
+                  <select id="statusFilter">
+                    <option value="">All</option>
+                    <option value="Resolved">Resolved</option>
+                    <option value="Pending">Pending</option>
+                  </select>
+                </div>
+              </div>
+              <div class="flex justify-end mt-16">
+                <button class="link-btn" id="clearFiltersBtn">
+                  Clear all filters
+                </button>
+              </div>
+            </div>
+
+            <div
+              id="emptyState"
+              class="card card-pad"
+              style="display: none; text-align: center; padding: 60px 20px"
+            >
+              <p class="text-muted">No data matches the selected filters.</p>
+            </div>
+
+            <div id="chartsWrap">
+              <div class="stat-grid">
+                <div class="stat-card stat-card--total">
+                  <div class="stat-icon">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9 17V7m6 10V7M5 21h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="stat-value" id="statTotal">–</div>
+                    <div class="stat-label">Total Entries</div>
+                  </div>
+                </div>
+                <div class="stat-card stat-card--resolved">
+                  <div class="stat-icon">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="stat-value" id="statResolved">–</div>
+                    <div class="stat-label">Resolved</div>
+                  </div>
+                </div>
+                <div class="stat-card stat-card--pending">
+                  <div class="stat-icon">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="stat-value" id="statPending">–</div>
+                    <div class="stat-label">Pending</div>
+                  </div>
+                </div>
+                <div class="stat-card stat-card--overdue">
+                  <div class="stat-icon">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4a2 2 0 00-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="stat-value" id="statOverdue">–</div>
+                    <div class="stat-label">Overdue</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="chart-card wide mt-16">
+                <div class="chart-card-head">
+                  <h3>Complaints Over Time</h3>
+                  <span class="chart-note"
+                    >Total volume alongside Resolved / Pending trend</span
+                  >
+                </div>
+                <div class="chart-canvas-wrap">
+                  <canvas id="trendChart"></canvas>
+                </div>
+              </div>
+
+              <div class="chart-grid mt-16">
+                <div class="chart-card">
+                  <div class="chart-card-head">
+                    <h3>ATS Unit Split</h3>
+                    <span class="chart-note">Resolved vs Pending</span>
+                  </div>
+                  <div class="chart-canvas-wrap">
+                    <canvas id="unitChart"></canvas>
+                  </div>
+                </div>
+
+                <div class="chart-card">
+                  <div class="chart-card-head">
+                    <h3>Resolution Rate</h3>
+                    <span class="chart-note"
+                      >Resolved vs Pending breakdown</span
+                    >
+                  </div>
+                  <div class="resolution-donut-wrap">
+                    <div class="chart-canvas-wrap short" style="flex: 1">
+                      <canvas id="pieChart"></canvas>
+                    </div>
+                    <div class="resolution-rate-figure">
+                      <div class="rate-num" id="resolutionRate">–</div>
+                      <div class="rate-label">resolved</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="chart-card wide mt-16">
+                <div class="chart-card-head">
+                  <h3>Organization Split</h3>
+                  <span class="chart-note"
+                    >Resolved vs Pending, by originating organization</span
+                  >
+                </div>
+                <div class="chart-canvas-wrap tall">
+                  <canvas id="orgChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.3/chart.umd.min.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/visualize.js"></script>
+  </body>
+</html>

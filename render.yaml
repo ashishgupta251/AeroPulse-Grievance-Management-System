@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: aeropulse-grievance
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: MONGO_URI
+        placeholder: mongodb+srv://...
+      - key: LOGIN_USERNAME
+        value: admin
+      - key: LOGIN_PASSWORD
+        placeholder: Enter admin password

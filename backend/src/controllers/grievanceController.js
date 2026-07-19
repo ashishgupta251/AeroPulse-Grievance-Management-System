@@ -17,8 +17,6 @@ export async function createGrievance(req, res) {
       complainingUnit,
       logExtract,
       status,
-      response,
-      pdc,
       remarks,
     } = req.body;
     const grievance = new Grievance({
@@ -26,8 +24,6 @@ export async function createGrievance(req, res) {
       complainingUnit,
       logExtract,
       status,
-      response: response || "",
-      pdc: pdc || null,
       remarks: remarks || "",
     });
     const saved = await grievance.save();
@@ -45,8 +41,6 @@ export async function updateGrievance(req, res) {
       complainingUnit,
       logExtract,
       status,
-      response,
-      pdc,
       remarks,
     } = req.body;
     const updated = await Grievance.findByIdAndUpdate(
@@ -56,8 +50,6 @@ export async function updateGrievance(req, res) {
         complainingUnit,
         logExtract,
         status,
-        response: response || "",
-        pdc: pdc || null,
         remarks: remarks || "",
       },
       { new: true },

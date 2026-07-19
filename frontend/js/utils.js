@@ -98,15 +98,6 @@ function toLocalDateString(date) {
   return `${y}-${m}-${d}`;
 }
 
-function isOverdue(row) {
-  if (row.status !== "Pending" || !row.pdc) return false;
-  const pdcDate = new Date(row.pdc);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  pdcDate.setHours(0, 0, 0, 0);
-  return pdcDate < today;
-}
-
 function loadImageAsBase64(url) {
   return fetch(url)
     .then((res) => res.blob())
@@ -138,8 +129,6 @@ function rowsToExportData(rows) {
       "ATS Unit": r.complainingUnit,
       "Log Extracts": r.logExtract,
       Status: r.status,
-      Response: r.response || "",
-      PDC: r.pdc ? formatDateDDMMYYYY(new Date(r.pdc)) : "",
       Remarks: r.remarks,
     };
   });
@@ -148,7 +137,7 @@ function rowsToExportData(rows) {
 async function downloadExcel(rows, filename, sheetName) {
   const data = rowsToExportData(rows);
   const headers = Object.keys(data[0] || {});
-  const wrapCols = new Set(["Log Extracts", "Response", "Remarks"]);
+  const wrapCols = new Set(["Log Extracts", "Remarks"]);
 
   const workbook = new ExcelJS.Workbook();
   workbook.creator = "AeroPulse";
@@ -211,16 +200,7 @@ async function downloadExcel(rows, filename, sheetName) {
     const statusColIdx = headers.indexOf("Status") + 1;
     if (statusColIdx > 0) {
       const statusCell = excelRow.getCell(statusColIdx);
-      const overdue = typeof isOverdue === "function" && isOverdue(rows[idx]);
-      if (overdue) {
-        statusCell.value = "Overdue";
-        statusCell.fill = {
-          type: "pattern",
-          pattern: "solid",
-          fgColor: { argb: "FFFEE2E2" },
-        };
-        statusCell.font = { color: { argb: "FFB91C1C" }, bold: true };
-      } else if (rowData["Status"] === "Resolved") {
+      if (rowData["Status"] === "Resolved") {
         statusCell.fill = {
           type: "pattern",
           pattern: "solid",
@@ -271,7 +251,6 @@ const PDF_BRAND_NAVY = [20, 32, 63];
 const PDF_BRAND_AMBER = [232, 148, 12];
 const PDF_ZEBRA = [246, 247, 249];
 const PDF_STATUS_COLORS = {
-  Overdue: { fill: [254, 226, 226], text: [185, 28, 28] },
   Resolved: { fill: [220, 252, 231], text: [22, 101, 52] },
   Pending: { fill: [254, 243, 199], text: [146, 64, 14] },
 };
@@ -305,10 +284,6 @@ async function downloadPdf(rows, filename, title) {
   );
   doc.setFont(undefined, "normal");
 
-  const overdueByRow = rows.map(
-    (r) => typeof isOverdue === "function" && isOverdue(r),
-  );
-
   doc.autoTable({
     startY: 32,
     head: [
@@ -320,8 +295,6 @@ async function downloadPdf(rows, filename, title) {
         "ATS Unit",
         "Log Extract",
         "Status",
-        "Response",
-        "PDC",
         "Remarks",
       ],
     ],
@@ -334,9 +307,7 @@ async function downloadPdf(rows, filename, title) {
         r.organizationName,
         r.complainingUnit,
         r.logExtract,
-        overdueByRow[i] ? "Overdue" : r.status,
-        r.response || "",
-        r.pdc ? formatDateDDMMYYYY(new Date(r.pdc)) : "",
+        r.status,
         r.remarks,
       ];
     }),

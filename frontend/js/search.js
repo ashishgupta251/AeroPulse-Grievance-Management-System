@@ -8,7 +8,6 @@ function matchesSearch(row, query) {
     row.complainingUnit,
     row.logExtract,
     row.status,
-    row.response,
     row.remarks,
   ]
     .filter(Boolean)

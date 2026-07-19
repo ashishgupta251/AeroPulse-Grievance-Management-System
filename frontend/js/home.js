@@ -4,8 +4,6 @@
     complainingUnit: "",
     logExtract: "",
     status: "",
-    response: "",
-    pdc: "",
     remarks: "",
   };
 
@@ -27,8 +25,6 @@
   const unitSelect = document.getElementById("f-unit");
   const logInput = document.getElementById("f-log");
   const statusSelect = document.getElementById("f-status");
-  const responseInput = document.getElementById("f-response");
-  const pdcInput = document.getElementById("f-pdc");
   const remarksInput = document.getElementById("f-remarks");
 
   const submitBtn = document.getElementById("submitBtn");
@@ -45,7 +41,7 @@
   const statTotal = document.getElementById("statTotal");
   const statResolved = document.getElementById("statResolved");
   const statPending = document.getElementById("statPending");
-  const statOverdue = document.getElementById("statOverdue");
+  const statThisWeek = document.getElementById("statThisWeek");
 
   const navBadgePending = document.getElementById("navBadgePending");
   const sidebarClock = document.getElementById("sidebarClock");
@@ -162,8 +158,6 @@
       complainingUnit: unitSelect.value,
       logExtract: logInput.value,
       status: statusSelect.value,
-      response: responseInput.value,
-      pdc: pdcInput.value,
       remarks: remarksInput.value,
     };
   }
@@ -173,8 +167,6 @@
     unitSelect.value = v.complainingUnit || "";
     logInput.value = v.logExtract || "";
     statusSelect.value = v.status || "";
-    responseInput.value = v.response || "";
-    pdcInput.value = v.pdc || "";
     remarksInput.value = v.remarks || "";
   }
 
@@ -199,8 +191,6 @@
     unitSelect,
     logInput,
     statusSelect,
-    responseInput,
-    pdcInput,
     remarksInput,
   ].forEach((elm) => elm.addEventListener("input", refreshSubmitState));
   [orgSelect, deptSelect, subunitSelect, unitSelect, statusSelect].forEach(
@@ -219,7 +209,7 @@
   cancelEditBtn.addEventListener("click", resetForm);
 
   async function loadRows() {
-    renderSkeletonRows(tableBody, 11, 5);
+    renderSkeletonRows(tableBody, 9, 5);
     try {
       rows = await fetchGrievances();
       setSidebarStatus(true);
@@ -227,7 +217,7 @@
     } catch (err) {
       setSidebarStatus(false);
       toast.error("Failed to load data");
-      tableBody.innerHTML = `<tr><td colspan="11" class="empty-state">Could not load data. Check your connection.</td></tr>`;
+      tableBody.innerHTML = `<tr><td colspan="9" class="empty-state">Could not load data. Check your connection.</td></tr>`;
     }
   }
 
@@ -237,35 +227,13 @@
     return `<span class="badge badge-pending"><span class="ping"></span>Pending</span>`;
   }
 
-  function pdcUrgencyFlag(row) {
-    if (row.status !== "Pending" || !row.pdc) return "";
-    const pdcDate = new Date(row.pdc);
-    if (isNaN(pdcDate.getTime())) return "";
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    pdcDate.setHours(0, 0, 0, 0);
-    const diffDays = Math.round((pdcDate - today) / 86400000);
-
-    if (diffDays < 0) {
-      const n = Math.abs(diffDays);
-      return `<div class="overdue-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4a2 2 0 00-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z"/></svg>Overdue by ${n}d</div>`;
-    }
-    if (diffDays === 0) {
-      return `<div class="due-soon-flag due-today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 7v5l3 3"/></svg>Due today</div>`;
-    }
-    if (diffDays <= 3) {
-      return `<div class="due-soon-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 7v5l3 3"/></svg>Due in ${diffDays}d</div>`;
-    }
-    return "";
-  }
-
   function getSortedRows(list) {
     if (!sortKey) return list;
     const copy = list.slice();
     copy.sort((a, b) => {
       let av = a[sortKey] || "";
       let bv = b[sortKey] || "";
-      if (sortKey === "createdAt" || sortKey === "pdc") {
+      if (sortKey === "createdAt") {
         av = av ? new Date(av).getTime() : 0;
         bv = bv ? new Date(bv).getTime() : 0;
       } else {
@@ -329,6 +297,12 @@
     requestAnimationFrame(step);
   }
 
+  function isThisWeek(row) {
+    const t = new Date(row.createdAt).getTime();
+    const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    return !isNaN(t) && t >= weekAgo;
+  }
+
   function updateStatCardActiveUI() {
     document.querySelectorAll(".stat-card").forEach((card) => {
       const key = card.getAttribute("data-stat-filter");
@@ -337,7 +311,10 @@
     });
     if (statusFilter && statusFilter !== "all") {
       activeFilterChip.style.display = "flex";
-      activeFilterLabel.textContent = `Showing: ${statusFilter}`;
+      activeFilterLabel.textContent =
+        statusFilter === "ThisWeek"
+          ? "Showing: This Week"
+          : `Showing: ${statusFilter}`;
     } else {
       activeFilterChip.style.display = "none";
     }
@@ -347,7 +324,7 @@
     let visibleRows = rows.filter((r) => matchesSearch(r, searchQuery));
     if (statusFilter && statusFilter !== "all") {
       visibleRows = visibleRows.filter((r) =>
-        statusFilter === "Overdue" ? isOverdue(r) : r.status === statusFilter,
+        statusFilter === "ThisWeek" ? isThisWeek(r) : r.status === statusFilter,
       );
     }
     visibleRows = getSortedRows(visibleRows);
@@ -355,11 +332,11 @@
     const total = rows.length;
     const resolved = rows.filter((r) => r.status === "Resolved").length;
     const pending = rows.filter((r) => r.status === "Pending").length;
-    const overdue = rows.filter(isOverdue).length;
+    const thisWeek = rows.filter(isThisWeek).length;
     animateCount(statTotal, total);
     animateCount(statResolved, resolved);
     animateCount(statPending, pending);
-    animateCount(statOverdue, overdue);
+    animateCount(statThisWeek, thisWeek);
     updateStatCardActiveUI();
 
     updateNavBadges(rows);
@@ -373,7 +350,7 @@
 
     if (visibleRows.length === 0) {
       tableBody.innerHTML = `
-        <tr><td colspan="11">
+        <tr><td colspan="9">
           <div class="empty-state">
             <div class="empty-icon-ring">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m6 10V7M5 21h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
@@ -388,13 +365,12 @@
       .map((row, i) => {
         const d = new Date(row.createdAt);
         const validDate = !isNaN(d.getTime());
-        const overdue = isOverdue(row);
         const isExpanded = expandedId === row._id;
         const isNew = lastAddedId === row._id;
         const isExiting = exitingIds.has(row._id);
 
         const mainRow = `
-        <tr class="data-row ${i % 2 === 1 ? "row-alt" : ""} ${overdue ? "row-overdue" : ""} ${isExpanded ? "expanded" : ""} ${isNew ? "row-enter" : ""} ${isExiting ? "row-exit" : ""}" data-row-id="${row._id}">
+        <tr class="data-row ${i % 2 === 1 ? "row-alt" : ""} ${isExpanded ? "expanded" : ""} ${isNew ? "row-enter" : ""} ${isExiting ? "row-exit" : ""}" data-row-id="${row._id}">
           <td class="mono" data-label="S.No"><span class="expand-caret">▸</span>${i + 1}</td>
           <td class="mono" data-label="Date">${validDate ? formatDateDDMMYYYY(d) : "—"}</td>
           <td class="mono col-time" data-label="Time">${validDate ? d.toLocaleTimeString() : "—"}</td>
@@ -404,10 +380,7 @@
           <td data-label="Status">
             ${row.status ? statusBadge(row.status) : "—"}
             ${isNew ? `<span class="new-tag">NEW</span>` : ""}
-            ${pdcUrgencyFlag(row)}
           </td>
-          <td class="cell-truncate col-response" data-label="Response" title="${escapeHtml(row.response)}">${escapeHtml(row.response) || "—"}</td>
-          <td class="mono col-pdc" data-label="PDC">${row.pdc ? formatDateDDMMYYYY(new Date(row.pdc)) : "—"}</td>
           <td class="cell-truncate col-remarks" data-label="Remarks" title="${escapeHtml(row.remarks)}">${escapeHtml(row.remarks) || "—"}</td>
           <td data-label="Actions">
             <div class="row-actions">
@@ -424,10 +397,9 @@
         </tr>`;
 
         const detailRow = isExpanded
-          ? `<tr class="detail-row"><td colspan="11">
+          ? `<tr class="detail-row"><td colspan="9">
               <div class="detail-grid">
                 <div class="detail-block"><h4>Log Extract</h4><p>${escapeHtml(row.logExtract) || "—"}</p></div>
-                <div class="detail-block"><h4>Response</h4><p>${escapeHtml(row.response) || "—"}</p></div>
                 <div class="detail-block"><h4>Remarks</h4><p>${escapeHtml(row.remarks) || "—"}</p></div>
               </div>
             </td></tr>`
@@ -467,8 +439,6 @@
       complainingUnit: row.complainingUnit,
       logExtract: row.logExtract,
       status: row.status,
-      response: row.response || "",
-      pdc: row.pdc ? row.pdc.split("T")[0] : "",
       remarks: row.remarks || "",
     });
     formTitle.textContent = "Edit Entry";
@@ -675,8 +645,6 @@
   const OPTIONAL_COLUMNS = [
     { key: "time", label: "Time" },
     { key: "log", label: "Log Extract" },
-    { key: "response", label: "Response" },
-    { key: "pdc", label: "PDC" },
     { key: "remarks", label: "Remarks" },
   ];
   const columnToggleContainer = document.getElementById("columnToggle");

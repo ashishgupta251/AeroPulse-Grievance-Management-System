@@ -65,7 +65,7 @@
 
     if (filteredRows.length === 0) {
       tableBody.innerHTML = `
-        <tr><td colspan="10">
+        <tr><td colspan="8">
           <div class="empty-state">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="M21 21l-4.3-4.3"/></svg>
             <p>No matching data. Try adjusting your filters.</p>
@@ -78,9 +78,8 @@
       .map((row, i) => {
         const d = new Date(row.createdAt);
         const validDate = !isNaN(d.getTime());
-        const overdue = isOverdue(row);
         return `
-        <tr class="${overdue ? "row-overdue" : ""}">
+        <tr>
           <td class="mono">${i + 1}</td>
           <td class="mono">${validDate ? formatDateDDMMYYYY(d) : "—"}</td>
           <td class="mono">${validDate ? d.toLocaleTimeString() : "—"}</td>
@@ -89,10 +88,7 @@
           <td class="cell-truncate" title="${escapeHtml(row.logExtract)}">${escapeHtml(row.logExtract) || "—"}</td>
           <td>
             ${row.status ? statusBadge(row.status) : "—"}
-            ${overdue ? `<div class="overdue-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4a2 2 0 00-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z"/></svg>Overdue</div>` : ""}
           </td>
-          <td class="cell-truncate" title="${escapeHtml(row.response)}">${escapeHtml(row.response) || "—"}</td>
-          <td class="mono">${row.pdc ? formatDateDDMMYYYY(new Date(row.pdc)) : "—"}</td>
           <td class="cell-truncate" title="${escapeHtml(row.remarks)}">${escapeHtml(row.remarks) || "—"}</td>
         </tr>`;
       })
@@ -100,7 +96,7 @@
   }
 
   async function loadRows() {
-    renderSkeletonRows(tableBody, 10, 5);
+    renderSkeletonRows(tableBody, 8, 5);
     try {
       allRows = await fetchGrievances();
       setSidebarStatus(true);
@@ -109,7 +105,7 @@
     } catch (err) {
       setSidebarStatus(false);
       toast.error("Failed to load data");
-      tableBody.innerHTML = `<tr><td colspan="10" class="empty-state">Could not load data. Check your connection.</td></tr>`;
+      tableBody.innerHTML = `<tr><td colspan="8" class="empty-state">Could not load data. Check your connection.</td></tr>`;
     }
   }
 

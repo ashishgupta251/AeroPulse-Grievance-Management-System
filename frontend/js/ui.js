@@ -410,9 +410,6 @@ function updateNavBadges(rows) {
   if (!Array.isArray(rows)) return;
   const pending = rows.filter((r) => r.status === "Pending").length;
   const total = rows.length;
-  const overdue = rows.filter(
-    (r) => typeof isOverdue === "function" && isOverdue(r),
-  ).length;
 
   const setBadge = (id, value) => {
     const el = document.getElementById(id);
@@ -426,7 +423,6 @@ function updateNavBadges(rows) {
   };
   setBadge("navBadgePending", pending);
   setBadge("navBadgeTotal", total);
-  setBadge("navBadgeOverdue", overdue);
 }
 
 const ACTIVITY_KEY = "aeropulse-activity-log";

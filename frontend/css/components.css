@@ -369,47 +369,6 @@ tr.data-row.expanded .expand-caret {
   }
 }
 
-.overdue-flag {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 10.5px;
-  font-weight: 700;
-  color: var(--overdue-red);
-  margin-top: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-.overdue-flag svg {
-  width: 11px;
-  height: 11px;
-}
-
-.due-soon-flag {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 10.5px;
-  font-weight: 700;
-  color: #a3720a;
-  margin-top: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-[data-theme="dark"] .due-soon-flag {
-  color: var(--pending-amber);
-}
-.due-soon-flag svg {
-  width: 11px;
-  height: 11px;
-}
-.due-soon-flag.due-today {
-  color: var(--signal-blue);
-}
-[data-theme="dark"] .due-soon-flag.due-today {
-  color: var(--signal-blue-bright);
-}
-
 .row-actions {
   display: flex;
   align-items: center;
@@ -628,10 +587,6 @@ tr.data-row.expanded .expand-caret {
   color: #04302c;
   animation: none;
   box-shadow: none;
-}
-
-.nav-badge--overdue {
-  background: var(--overdue-red);
 }
 
 @keyframes nav-badge-pulse {
